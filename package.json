@@ -1,0 +1,34 @@
+{
+  "name": "comfychair",
+  "version": "0.0.1",
+  "description": "A property-based testing tool for Javascript",
+  "keywords": [
+    "property-based",
+    "generative",
+    "testing",
+    "unit test",
+    "quickcheck"
+  ],
+  "homepage": "https://github.com/odf/comfychair",
+  "bugs": {
+    "url": "https://github.com/odf/comfychair/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Olaf Delgado-Friedrichs",
+    "email": "olaf.delgado@gmail.com"
+  },
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odf/comfychair.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "jasmine-node": "~1.13.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine-node ."
+  }
+}
