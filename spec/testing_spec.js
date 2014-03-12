@@ -66,6 +66,13 @@ describe('a stack', function() {
           return [];
       },
 
+      shrinkArgs: function(command, args) {
+        if (command == 'push' && args[0] > 0)
+          return [[args[0] - 1]];
+        else
+          return [];
+      },
+
       initial: function() {
         return [];
       },

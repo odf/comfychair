@@ -124,12 +124,23 @@ var session = function(model, size) {
 
 var shrinkSession = function(model, log) {
   var result = []
-  var i, shrunk;
+  var n = log.length;
+  var i, j, shrunk, tmp;
 
-  for (i = 0; i < log.length; ++i) {
+  for (i = 0; i < n; ++i) {
     shrunk = log.slice();
     shrunk.splice(i, 1);
     result.push(simulate(model, shrunk));
+
+    tmp = model.shrinkArgs(log[i].command, log[i].args);
+    for (j = 0; j < tmp.length; ++j) {
+      shrunk = log.slice();
+      shrunk[i] = {
+        command: shrunk[i].command,
+        args   : tmp[j]
+      };
+      result.push(simulate(model, shrunk));
+    }
   }
 
   return result;
