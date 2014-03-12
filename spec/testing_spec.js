@@ -25,86 +25,119 @@ describe('a simple predicate testing for positivity', function() {
 });
 
 
-describe('a stack', function() {
-  var stack = {
-    _data: [],
-
-    push: function(x) {
-      this._data.push(x);
+describe('a model describing a stack', function() {
+  var model = {
+    commands: function() {
+      return ['push', 'pop', 'empty'];
     },
 
-    pop: function() {
-      if (this._data.length == 0)
-        throw new Error('stack is empty');
+    randomArgs: function(command, size) {
+      if (command == 'push')
+        return [G.randomInt(0, size)];
       else
-        return this._data.pop();
-    },
-    
-    empty: function() {
-      return this._data.length == 0;
+        return [];
     },
 
-    reset: function() {
-      this._data = [];
+    shrinkArgs: function(command, args) {
+      if (command == 'push' && args[0] > 0)
+        return [[args[0] - 1]];
+      else
+        return [];
     },
 
-    apply: function(command, args) {
-      return this[command].apply(this, args);
+    initial: function() {
+      return [];
+    },
+
+    apply: function(state, command, args) {
+      switch(command) {
+      case 'push':
+        return {
+          state: state.concat(args[0])
+        }
+      case 'pop':
+        if (state.length == 0)
+          return {
+            state : state,
+            thrown: new Error('stack is empty').message
+          }
+        else
+          return {
+            state : state.slice(0, state.length-1),
+            output: state[state.length-1]
+          }
+      case 'empty':
+        return {
+          state : state,
+          output: state.length == 0
+        }
+      }
     }
   };
 
-  describe('described by an appropriate model', function() {
-    var model = {
-      commands: function() {
-        return ['push', 'pop', 'empty'];
+  describe('with a correct stack implementation', function() {
+    var stack = {
+      _data: [],
+
+      push: function(x) {
+        this._data.push(x);
       },
 
-      randomArgs: function(command, size) {
-        if (command == 'push')
-          return [G.randomInt(0, size)];
+      pop: function() {
+        if (this._data.length == 0)
+          throw new Error('stack is empty');
         else
-          return [];
+          return this._data.pop();
+      },
+      
+      empty: function() {
+        return this._data.length == 0;
       },
 
-      shrinkArgs: function(command, args) {
-        if (command == 'push' && args[0] > 0)
-          return [[args[0] - 1]];
-        else
-          return [];
+      reset: function() {
+        this._data = [];
       },
 
-      initial: function() {
-        return [];
-      },
-
-      apply: function(state, command, args) {
-        switch(command) {
-        case 'push':
-          return {
-            state: state.concat(args[0])
-          }
-        case 'pop':
-          if (state.length == 0)
-            return {
-              state : state,
-              thrown: new Error('stack is empty').message
-            }
-          else
-            return {
-              state : state.slice(0, state.length-1),
-              output: state[state.length-1]
-            }
-        case 'empty':
-          return {
-            state : state,
-            output: state.length == 0
-          }
-        }
+      apply: function(command, args) {
+        return this[command].apply(this, args);
       }
     };
 
-    it('passes the conformity test', function() {
+    it('leads to a passing test', function() {
       expect(stack).toConformTo(model);
+    });
+  });
+
+  describe('with an incorrect stack implementation', function() {
+    var stack = {
+      _data: [],
+
+      push: function(x) {
+        this._data.push(x);
+      },
+
+      pop: function() {
+        if (this._data.length == 0)
+          throw new Error('stack is empty');
+        else
+          return this._data.shift();
+      },
+      
+      empty: function() {
+        return this._data.length == 0;
+      },
+
+      reset: function() {
+        this._data = [];
+      },
+
+      apply: function(command, args) {
+        return this[command].apply(this, args);
+      }
+    };
+
+    it('leads to a failing test', function() {
+      expect(stack).not.toConformTo(model);
     });
   });
 });
