@@ -23,6 +23,23 @@ Generative.failure = function(cause) {
   return { successful: false, cause: cause };
 };
 
+Generative.shrinkInt = function(n) {
+  var a = Math.abs(n);
+  var s = n / a;
+  var m = a;
+  var r = [];
+
+  while(m > 1) {
+    m = Math.floor(m / 2);
+    r.push(s * (a - m));
+  }
+
+  if (a == 1)
+    r.push(0);
+
+  return r;
+};
+
 
 var shrink = function(predicate, candidate, shrinker) {
   var smallest = candidate;
