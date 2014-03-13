@@ -86,7 +86,7 @@ var merge = function(obj1, obj2) {
 
 
 var simulate = function(model, session) {
-  var state = model.initial();
+  var state = null;
   var log = [];
   var i, result;
 
@@ -107,10 +107,13 @@ var simulate = function(model, session) {
 var session = function(model, size) {
   var G = Generative;
   var n = G.randomInt(1, size+1);
-  var session = [];
+  var session = [{
+    command: 'init',
+    args   : model.randomArgs('init', size)
+  }];
   var i, command;
 
-  for (i = 0; i < n; ++i) {
+  for (i = 1; i < n; ++i) {
     command = G.oneOf(model.commands());
     session.push({
       command: command,
@@ -127,7 +130,7 @@ var shrinkSession = function(model, log) {
   var n = log.length;
   var i, j, shrunk, tmp;
 
-  for (i = 0; i < n; ++i) {
+  for (i = 1; i < n; ++i) {
     shrunk = log.slice();
     shrunk.splice(i, 1);
     result.push(simulate(model, shrunk));
@@ -149,8 +152,6 @@ var shrinkSession = function(model, log) {
 
 var verify = function(system, log) {
   var i, output, thrown;
-
-  system.reset();
 
   for (i = 0; i < log.length; ++i) {
     output = thrown = undefined;

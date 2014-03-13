@@ -45,12 +45,12 @@ describe('a model describing a stack', function() {
         return [];
     },
 
-    initial: function() {
-      return [];
-    },
-
     apply: function(state, command, args) {
       switch(command) {
+      case 'init':
+        return {
+          state: []
+        }
       case 'push':
         return {
           state: state.concat(args[0])
@@ -94,7 +94,7 @@ describe('a model describing a stack', function() {
         return this._data.length == 0;
       },
 
-      reset: function() {
+      init: function() {
         this._data = [];
       },
 
@@ -127,7 +127,7 @@ describe('a model describing a stack', function() {
         return this._data.length == 0;
       },
 
-      reset: function() {
+      init: function() {
         this._data = [];
       },
 
