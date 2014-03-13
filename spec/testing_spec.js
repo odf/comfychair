@@ -27,8 +27,41 @@ describe('a simple predicate testing for positivity', function() {
 
 describe('a model describing a stack', function() {
   var model = {
+    _transitions: {
+      init: function() {
+        return {
+          state: []
+        };
+      },
+      push: function(state, val) {
+        return {
+          state: state.concat(val)
+        };
+      },
+      pop: function(state) {
+        if (state.length == 0)
+          return {
+            state : state,
+            thrown: new Error('stack is empty').message
+          };
+        else
+          return {
+            state : state.slice(0, state.length-1),
+            output: state[state.length-1]
+          };
+      },
+      empty: function(state) {
+        return {
+          state : state,
+          output: state.length == 0
+        };
+      }
+    },
+
     commands: function() {
-      return ['push', 'pop', 'empty'];
+      var cmds = Object.keys(this._transitions).slice();
+      cmds.splice(cmds.indexOf('init'), 1);
+      return cmds;
     },
 
     randomArgs: function(command, size) {
@@ -46,32 +79,7 @@ describe('a model describing a stack', function() {
     },
 
     apply: function(state, command, args) {
-      switch(command) {
-      case 'init':
-        return {
-          state: []
-        }
-      case 'push':
-        return {
-          state: state.concat(args[0])
-        }
-      case 'pop':
-        if (state.length == 0)
-          return {
-            state : state,
-            thrown: new Error('stack is empty').message
-          }
-        else
-          return {
-            state : state.slice(0, state.length-1),
-            output: state[state.length-1]
-          }
-      case 'empty':
-        return {
-          state : state,
-          output: state.length == 0
-        }
-      }
+      return this._transitions[command].apply(null, [state].concat(args));
     }
   };
 
