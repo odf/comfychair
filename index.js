@@ -147,13 +147,13 @@ var shrinkSession = function(model, log) {
   var n = log.length;
   var i, j, shrunk, tmp;
 
-  for (i = 0; i < n; ++i) {
-    if (i > 0) {
-      shrunk = log.slice();
-      shrunk.splice(i, 1);
-      result.push(simulate(model, shrunk));
-    }
+  for (i = 1; i < n; ++i) {
+    shrunk = log.slice();
+    shrunk.splice(i, 1);
+    result.push(simulate(model, shrunk));
+  }
 
+  for (i = 0; i < n; ++i) {
     tmp = model.shrinkArgs(log[i].command, log[i].args);
     for (j = 0; j < tmp.length; ++j) {
       shrunk = log.slice();
